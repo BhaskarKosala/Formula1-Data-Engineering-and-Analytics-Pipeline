@@ -1,0 +1,169 @@
+{
+    "name": "transformed_formula1_data_pipeline",
+    "properties": {
+        "activities": [
+            {
+                "name": "Get Folder Details",
+                "type": "GetMetadata",
+                "dependsOn": [],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "dataset": {
+                        "referenceName": "linkservice_formula1_raw",
+                        "type": "DatasetReference",
+                        "parameters": {
+                            "p_window_end_date": {
+                                "value": "@pipeline().parameters.p_window_end_date",
+                                "type": "Expression"
+                            }
+                        }
+                    },
+                    "fieldList": [
+                        "exists"
+                    ],
+                    "storeSettings": {
+                        "type": "AzureBlobFSReadSettings",
+                        "enablePartitionDiscovery": false
+                    },
+                    "formatSettings": {
+                        "type": "JsonReadSettings"
+                    }
+                }
+            },
+            {
+                "name": "If Folder Exists",
+                "type": "IfCondition",
+                "dependsOn": [
+                    {
+                        "activity": "Get Folder Details",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "userProperties": [],
+                "typeProperties": {
+                    "expression": {
+                        "value": "@activity('Get Folder Details').output.Exists",
+                        "type": "Expression"
+                    },
+                    "ifTrueActivities": [
+                        {
+                            "name": "Transformed Race Results",
+                            "type": "DatabricksNotebook",
+                            "dependsOn": [],
+                            "policy": {
+                                "timeout": "0.12:00:00",
+                                "retry": 0,
+                                "retryIntervalInSeconds": 30,
+                                "secureOutput": false,
+                                "secureInput": false
+                            },
+                            "userProperties": [],
+                            "typeProperties": {
+                                "notebookPath": "/Formula1/delta_transformation/delta_transformed_race_results",
+                                "baseParameters": {
+                                    "p_file_date": {
+                                        "value": "@formatDateTime(pipeline().parameters.p_window_end_date, 'yyyy-MM-dd')",
+                                        "type": "Expression"
+                                    }
+                                }
+                            },
+                            "linkedServiceName": {
+                                "referenceName": "linkservice_databricks_ws",
+                                "type": "LinkedServiceReference"
+                            }
+                        },
+                        {
+                            "name": "Transformed Driver Standings",
+                            "type": "DatabricksNotebook",
+                            "dependsOn": [
+                                {
+                                    "activity": "Transformed Race Results",
+                                    "dependencyConditions": [
+                                        "Succeeded"
+                                    ]
+                                }
+                            ],
+                            "policy": {
+                                "timeout": "0.12:00:00",
+                                "retry": 0,
+                                "retryIntervalInSeconds": 30,
+                                "secureOutput": false,
+                                "secureInput": false
+                            },
+                            "userProperties": [],
+                            "typeProperties": {
+                                "notebookPath": "/Formula1/delta_transformation/delta_transformed_driver_standings",
+                                "baseParameters": {
+                                    "p_file_date": {
+                                        "value": "@formatDateTime(pipeline().parameters.p_window_end_date, 'yyyy-MM-dd')",
+                                        "type": "Expression"
+                                    }
+                                }
+                            },
+                            "linkedServiceName": {
+                                "referenceName": "linkservice_databricks_ws",
+                                "type": "LinkedServiceReference"
+                            }
+                        },
+                        {
+                            "name": "Transformed Constructor Standings",
+                            "type": "DatabricksNotebook",
+                            "dependsOn": [
+                                {
+                                    "activity": "Transformed Driver Standings",
+                                    "dependencyConditions": [
+                                        "Succeeded"
+                                    ]
+                                }
+                            ],
+                            "policy": {
+                                "timeout": "0.12:00:00",
+                                "retry": 0,
+                                "retryIntervalInSeconds": 30,
+                                "secureOutput": false,
+                                "secureInput": false
+                            },
+                            "userProperties": [],
+                            "typeProperties": {
+                                "notebookPath": "/Formula1/delta_transformation/delta_transformed_driver_standings",
+                                "baseParameters": {
+                                    "p_file_date": {
+                                        "value": "@formatDateTime(pipeline().parameters.p_window_end_date, 'yyyy-MM-dd')",
+                                        "type": "Expression"
+                                    }
+                                }
+                            },
+                            "linkedServiceName": {
+                                "referenceName": "linkservice_databricks_ws",
+                                "type": "LinkedServiceReference"
+                            }
+                        }
+                    ]
+                }
+            }
+        ],
+        "parameters": {
+            "p_window_end_date": {
+                "type": "string"
+            }
+        },
+        "variables": {
+            "v_data_source": {
+                "type": "String",
+                "defaultValue": "Ergast API"
+            }
+        },
+        "annotations": [],
+        "lastPublishTime": "2025-10-14T19:52:30Z"
+    },
+    "type": "Microsoft.DataFactory/factories/pipelines"
+}
