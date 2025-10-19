@@ -4,7 +4,7 @@
 
 This project demonstrates an end-to-end data engineering pipeline built using Microsoft Azure, designed to extract, process, and visualize Formula 1 race data from the Ergast API.
 
-## Architecture**
+## Architecture
 
 - **Data Source:** Ergast API (Formula 1 datasets — drivers, constructors, races, results, pit stops, lap times, qualifying, etc.)
 
@@ -15,6 +15,9 @@ This project demonstrates an end-to-end data engineering pipeline built using Mi
 - **Orchestration:** Azure Data Factory (ADF) pipelines for ingestion and transformation workflows
 
 - **Visualization:** Power BI dashboards connected to the presentation layer
+
+## End to End Data Flow
+
 
 ## Implementation Steps
 
