@@ -18,7 +18,7 @@ This project demonstrates an end-to-end data engineering pipeline built using Mi
 
 ## End to End Data Flow
 
-![image_alt] https://github.com/BhaskarKosala/Formula1-Data-Engineering-and-Analytics-Pipeline/blob/main/F1_Flow%20(1).jpg
+![image_alt]https://github.com/BhaskarKosala/Formula1-Data-Engineering-and-Analytics-Pipeline/blob/e422f33bfd617985ac601686d0ef7c18f0512f1a/F1_Flow%20(1).jpg
 
 
 ## Implementation Steps
